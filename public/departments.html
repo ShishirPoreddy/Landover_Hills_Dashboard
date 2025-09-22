@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departments - Municipal Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .nav a {
+            padding: 10px 20px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .nav a:hover {
+            background: #1d4ed8;
+        }
+        
+        .nav a.active {
+            background: #1e293b;
+        }
+        
+        .departments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .department-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        
+        .department-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .department-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .department-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+        }
+        
+        .department-budget {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        
+        .department-description {
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+        
+        .department-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #64748b;
+        }
+        
+        .highlight {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .highlight p {
+            margin: 0;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Department Spending</h1>
+            <p>Detailed budget breakdown by municipal department</p>
+            
+            <div class="nav">
+                <a href="index.html">Home</a>
+                <a href="budget.html">Budget Overview</a>
+                <a href="departments.html" class="active">Departments</a>
+                <a href="reports.html">Reports</a>
+                <a href="about.html">About</a>
+            </div>
+        </div>
+        
+        <div class="highlight">
+            <p><strong>🔍 Department-Specific Questions:</strong> Ask about any department! Try "How much does Public Works spend on road maintenance?" or "What's the Police department's biggest expense?" The assistant will find the exact numbers and supporting documents.</p>
+        </div>
+        
+        <!-- Fiscal Year Selection -->
+        <div class="chart-container">
+            <h3>Select Fiscal Year</h3>
+            <select id="fiscalYearSelect" onchange="loadDepartmentData()">
+                <option value="2024">FY2024</option>
+                <option value="2025" selected>FY2025</option>
+                <option value="2026">FY2026</option>
+            </select>
+        </div>
+        
+        <div class="departments-grid" id="departmentsGrid">
+            <div class="department-card">
+                <div class="department-header">
+                    <h3 class="department-name">🚧 Public Works</h3>
+                    <div class="department-budget">$8.2M</div>
+                </div>
+                <p class="department-description">Infrastructure maintenance, road repairs, utilities, and public facilities management.</p>
+                <div class="department-stats">
+                    <span>+5.2% vs last year</span>
+                    <span>18% of total budget</span>
+                </div>
+            </div>
+            
+            <div class="department-card">
+                <div class="department-header">
+                    <h3 class="department-name">👮 Police</h3>
+                    <div class="department-budget">$6.8M</div>
+                </div>
+                <p class="department-description">Law enforcement, public safety, emergency response, and community policing.</p>
+                <div class="department-stats">
+                    <span>+2.1% vs last year</span>
+                    <span>15% of total budget</span>
+                </div>
+            </div>
+            
+            <div class="department-card">
+                <div class="department-header">
+                    <h3 class="department-name">🌳 Parks & Recreation</h3>
+                    <div class="department-budget">$4.1M</div>
+                </div>
+                <p class="department-description">Parks maintenance, recreational programs, community events, and green space management.</p>
+                <div class="department-stats">
+                    <span>+8.3% vs last year</span>
+                    <span>9% of total budget</span>
+                </div>
+            </div>
+            
+            <div class="department-card">
+                <div class="department-header">
+                    <h3 class="department-name">💰 Finance</h3>
+                    <div class="department-budget">$2.3M</div>
+                </div>
+                <p class="department-description">Financial management, budgeting, accounting, and fiscal oversight.</p>
+                <div class="department-stats">
+                    <span>+1.5% vs last year</span>
+                    <span>5% of total budget</span>
+                </div>
+            </div>
+            
+            <div class="department-card">
+                <div class="department-header">
+                    <h3 class="department-name">🏛️ Administration</h3>
+                    <div class="department-budget">$3.2M</div>
+                </div>
+                <p class="department-description">General administration, human resources, legal services, and executive functions.</p>
+                <div class="department-stats">
+                    <span>+0.8% vs last year</span>
+                    <span>7% of total budget</span>
+                </div>
+            </div>
+            
+            <div class="department-card">
+                <div class="department-header">
+                    <h3 class="department-name">🚒 Fire & Emergency</h3>
+                    <div class="department-budget">$4.5M</div>
+                </div>
+                <p class="department-description">Fire protection, emergency medical services, disaster response, and safety programs.</p>
+                <div class="department-stats">
+                    <span>+3.7% vs last year</span>
+                    <span>10% of total budget</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="highlight" style="margin-top: 30px;">
+            <p><strong>💡 Pro Tip:</strong> The assistant can compare departments! Ask "Which department has the highest budget?" or "How does Police spending compare to Fire?"</p>
+        </div>
+    </div>
+    
+    <!-- Include the persistent assistant widget -->
+    <script src="assistant.js"></script>
+    
+    <script>
+        // Load department data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDepartmentData();
+        });
+        
+        async function loadDepartmentData() {
+            const fiscalYear = document.getElementById('fiscalYearSelect').value;
+            
+            try {
+                // Get department breakdown for the selected year
+                const response = await fetch(`/ask`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        question: `Break down the budget by department for FY${fiscalYear}`
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Clear existing departments
+                const departmentsGrid = document.getElementById('departmentsGrid');
+                departmentsGrid.innerHTML = '';
+                
+                // Create department cards from the data
+                if (data.evidence && data.evidence.length > 0) {
+                    // Group by department
+                    const deptTotals = {};
+                    data.evidence.forEach(item => {
+                        if (!deptTotals[item.department]) {
+                            deptTotals[item.department] = 0;
+                        }
+                        deptTotals[item.department] += item.amount;
+                    });
+                    
+                    // Sort departments by amount
+                    const sortedDepts = Object.entries(deptTotals)
+                        .sort(([,a], [,b]) => b - a);
+                    
+                    // Create department cards
+                    sortedDepts.forEach(([deptName, amount], index) => {
+                        const deptCard = createDepartmentCard(deptName, amount, data.total, fiscalYear);
+                        departmentsGrid.appendChild(deptCard);
+                    });
+                } else {
+                    departmentsGrid.innerHTML = '<p>No department data available for this fiscal year.</p>';
+                }
+                
+            } catch (error) {
+                console.error('Error loading department data:', error);
+                document.getElementById('departmentsGrid').innerHTML = '<p>Error loading department data.</p>';
+            }
+        }
+        
+        function createDepartmentCard(deptName, amount, totalBudget, fiscalYear) {
+            const card = document.createElement('div');
+            card.className = 'department-card';
+            
+            const percentage = ((amount / totalBudget) * 100).toFixed(1);
+            const amountFormatted = (amount / 1000000).toFixed(1);
+            
+            // Get department icon based on name
+            const icon = getDepartmentIcon(deptName);
+            
+            card.innerHTML = `
+                <div class="department-header">
+                    <h3 class="department-name">${icon} ${deptName}</h3>
+                    <div class="department-budget">$${amountFormatted}M</div>
+                </div>
+                <p class="department-description">${getDepartmentDescription(deptName)}</p>
+                <div class="department-stats">
+                    <span>${percentage}% of total budget</span>
+                    <span>FY${fiscalYear}</span>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function getDepartmentIcon(deptName) {
+            const icons = {
+                'POLICE DEPARTMENT': '🚔',
+                'TAXES': '💰',
+                'ENFORCEMENT FEES': '⚖️',
+                'GRANTS': '🎯',
+                'MISCELLANEOUS GRANTS': '🎯',
+                'LICENSE FEES': '📋',
+                'MISC. REVENUES': '📊',
+                'POLICE GRANTS': '🎯',
+                'TRASH REMOVAL': '🗑️',
+                'ADMINISTRATION': '🏛️',
+                'PUBLIC WORKS': '🚧',
+                'FIRE': '🚒'
+            };
+            return icons[deptName] || '🏢';
+        }
+        
+        function getDepartmentDescription(deptName) {
+            const descriptions = {
+                'POLICE DEPARTMENT': 'Law enforcement, public safety, and community policing services.',
+                'TAXES': 'Revenue collection from various tax sources including property and income taxes.',
+                'ENFORCEMENT FEES': 'Fees and fines from traffic enforcement, parking violations, and municipal infractions.',
+                'GRANTS': 'Federal and state grant funding for various municipal programs.',
+                'MISCELLANEOUS GRANTS': 'Additional grant funding from various sources.',
+                'LICENSE FEES': 'Revenue from business licenses, permits, and franchise fees.',
+                'MISC. REVENUES': 'Other miscellaneous revenue sources and fees.',
+                'POLICE GRANTS': 'Specialized grant funding for police department programs.',
+                'TRASH REMOVAL': 'Waste management and sanitation services.',
+                'ADMINISTRATION': 'General government administration and management.',
+                'PUBLIC WORKS': 'Infrastructure maintenance, road repairs, and public facilities.',
+                'FIRE': 'Fire protection and emergency services.'
+            };
+            return descriptions[deptName] || 'Municipal department providing essential services to the community.';
+        }
+    </script>
+</body>
+</html>
+
+

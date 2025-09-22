@@ -1,0 +1,528 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Landover Hills Budget Dashboard</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link href="tailwind.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #1a202c; color: #fff; }
+    .chart-wrapper { width: 100%; display: flex; justify-content: center; margin-bottom: 2rem; }
+    .chart-wrapper canvas { max-width: 90% !important; max-height: 75vh !important; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .kpi-card { position: relative; }
+    .kpi-tooltip {
+      display: none;
+      position: absolute;
+      bottom: -1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2d3748;
+      padding: 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+      white-space: nowrap;
+      z-index: 10;
+    }
+    .kpi-card:hover .kpi-tooltip { display: block; }
+  </style>
+</head>
+<body>
+  <div class="max-w-6xl mx-auto p-6">
+    <h1 class="text-4xl font-bold mb-6 text-center">Landover Hills Budget Dashboard</h1>
+
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="kpi-card bg-gray-800 rounded-lg p-6 text-center shadow hover:shadow-xl transition-shadow duration-200" tabindex="0">
+        <h2 class="text-xl font-medium mb-2">Total Budget</h2>
+        <p id="kpi-total" class="text-3xl font-bold">$0</p>
+        <div class="kpi-tooltip">Sum of all budget amounts across categories and years.</div>
+      </div>
+      <div class="kpi-card bg-gray-800 rounded-lg p-6 text-center shadow hover:shadow-xl transition-shadow duration-200" tabindex="0">
+        <h2 class="text-xl font-medium mb-2">Largest Category</h2>
+        <p id="kpi-largest" class="text-3xl font-bold">—</p>
+        <div class="kpi-tooltip">Category with the largest total allocation across all years.</div>
+      </div>
+      <div class="kpi-card bg-gray-800 rounded-lg p-6 text-center shadow hover:shadow-xl transition-shadow duration-200" tabindex="0">
+        <h2 class="text-xl font-medium mb-2">YoY Change</h2>
+        <p id="kpi-change" class="text-3xl font-bold">—</p>
+        <div class="kpi-tooltip">Percent change from the previous fiscal year to the latest.</div>
+      </div>
+    </div>
+
+
+    <div class="w-full mb-8">
+      <div class="flex justify-center border-b border-gray-700 mb-4">
+        <button data-tab="1" class="px-6 py-2 text-lg focus:outline-none hover:bg-gray-700">Total Budget</button>
+        <button data-tab="2" class="px-6 py-2 text-lg focus:outline-none hover:bg-gray-700">Breakdown</button>
+        <button data-tab="3" class="px-6 py-2 text-lg focus:outline-none hover:bg-gray-700">Over Time</button>
+      </div>
+
+
+      <div id="tab-1" class="tab-content active">
+        <div class="flex flex-wrap items-center gap-4 justify-center mb-4">
+          <label class="text-lg">Fiscal Year</label>
+          <select id="fiscalYear1" class="border bg-gray-800 text-white p-2 rounded"></select>
+          <label class="text-lg">Category</label>
+          <select id="category1" class="border bg-gray-800 text-white p-2 rounded"></select>
+          <button id="applyFilters1" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded">Apply Filters</button>
+        </div>
+        <div class="chart-wrapper bg-gray-800 rounded shadow p-6">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+
+
+      <div id="tab-2" class="tab-content">
+        <div class="flex flex-wrap items-center gap-4 justify-center mb-4">
+          <label class="text-lg">Fiscal Year</label>
+          <select id="fiscalYear2" class="border bg-gray-800 text-white p-2 rounded"></select>
+          <label class="text-lg">Category</label>
+          <select id="category2" class="border bg-gray-800 text-white p-2 rounded"></select>
+          <button id="applyFilters2" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded">Apply Filters</button>
+        </div>
+        <div class="chart-wrapper bg-gray-800 rounded shadow p-6">
+          <canvas id="amountByCategoryChart"></canvas>
+        </div>
+      </div>
+
+
+      <div id="tab-3" class="tab-content">
+        <div class="flex flex-wrap items-center gap-4 justify-center mb-4">
+          <label class="text-lg">Fiscal Year</label>
+          <select id="fiscalYear3" class="border bg-gray-800 text-white p-2 rounded"></select>
+          <label class="text-lg">Category</label>
+          <select id="category3" class="border bg-gray-800 text-white p-2 rounded"></select>
+          <button id="applyFilters3" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded">Apply Filters</button>
+        </div>
+        <div class="chart-wrapper bg-gray-800 rounded shadow p-6">
+          <canvas id="areaChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    Chart.defaults.color = '#fff';
+    Chart.defaults.font.family = 'sans-serif';
+
+    const API_URL = 'http://127.0.0.1:8000';
+
+    let data = [], categoryChart, amountByCategoryChart, areaChart;
+
+    async function fetchData() {
+      try {
+        // Fetch all budget facts from Supabase via our API
+        const response = await fetch(`${API_URL}/budget-facts`);
+        const budgetFacts = await response.json();
+        
+        // Transform the data to match the expected format
+        data = budgetFacts.map(item => ({
+          category: item.department || 'Unknown',
+          lineItem: item.line_item || 'Unknown',
+          amount: parseFloat(item.amount) || 0,
+          fiscalYear: item.fiscal_year ? `FY${item.fiscal_year}` : 'Unknown'
+        }));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Fallback to empty data if API fails
+        data = [];
+      }
+    }
+
+    function populateSelects(id) {
+      const yrs = [...new Set(data.map(d => d.fiscalYear))].sort();
+      const cs  = [...new Set(data.map(d => d.category))].sort();
+
+      document.getElementById('fiscalYear' + id).innerHTML =
+        '<option value="">All</option>' +
+        yrs.map(y => '<option>' + y + '</option>').join('');
+
+      document.getElementById('category' + id).innerHTML =
+        '<option value="">All</option>' +
+        cs.map(c => '<option>' + c + '</option>').join('');
+    }
+
+    function updateKPIs() {
+      const total = data.reduce((sum, d) => sum + d.amount, 0);
+      const byCat = data.reduce((o, d) => {
+        o[d.category] = (o[d.category]||0) + d.amount;
+        return o;
+      }, {});
+      const [[top, val] = ['—', 0]] = Object.entries(byCat)
+        .sort((a,b) => b[1] - a[1]);
+
+      const yrs = [...new Set(data.map(d => d.fiscalYear))].sort();
+      const L = yrs.at(-1), P = yrs.at(-2) || L;
+      const sumY = y => data
+        .filter(d => d.fiscalYear === y)
+        .reduce((s,d) => s + d.amount, 0);
+      const pct = P
+        ? ((sumY(L) - sumY(P)) / sumY(P) * 100).toFixed(1)
+        : '—';
+
+      document.getElementById('kpi-total').innerText   = `$${total ? total.toLocaleString() : '0'}`;
+      document.getElementById('kpi-largest').innerText = `${top} ($${val ? val.toLocaleString() : '0'})`;
+      document.getElementById('kpi-change').innerText  = `${pct}%`;
+    }
+
+    function updateCategoryChart() {
+      const fy = document.getElementById('fiscalYear1').value;
+      const ct = document.getElementById('category1').value;
+      let f = data;
+      if (fy) f = f.filter(d => d.fiscalYear === fy);
+      if (ct) f = f.filter(d => d.category === ct);
+
+      const totals = f.reduce((o, d) => {
+        o[d.category] = (o[d.category]||0) + d.amount;
+        return o;
+      }, {});
+
+      const labels = Object.keys(totals), vals = Object.values(totals);
+
+      if (categoryChart) categoryChart.destroy();
+      categoryChart = new Chart(
+        document.getElementById('categoryChart'),
+        {
+          type: 'bar',
+          data: { labels, datasets: [{ data: vals, backgroundColor: 'rgba(56,189,248,0.5)', borderColor: 'rgba(56,189,248,1)', borderWidth: 1 }] },
+          options:{
+            responsive:true,
+            plugins:{ tooltip:{ enabled: true }},
+            scales:{
+              x:{ ticks:{ color:'#fff' }},
+              y:{ beginAtZero:true, ticks:{ color:'#fff' }}
+            }
+          }
+        }
+      );
+    }
+
+    function updateAmountByCategoryChart() {
+      const fy = document.getElementById('fiscalYear2').value;
+      const ct = document.getElementById('category2').value;
+      let f = data;
+      if (fy) f = f.filter(d => d.fiscalYear === fy);
+      if (ct) f = f.filter(d => d.category === ct);
+
+      let labels = [], vals = [], title = '';
+
+      if (!fy && !ct) {
+        const all = data.reduce((o, d) => {
+          o[d.category] = (o[d.category]||0) + d.amount;
+          return o;
+        }, {});
+        const top = Object.entries(all)
+          .sort((a,b)=>b[1]-a[1])
+          .slice(0,5);
+        labels = top.map(e=>e[0]);
+        vals   = top.map(e=>e[1]);
+        title  = 'Top 5 Categories';
+      }
+      else if (fy && !ct) {
+        const all = f.reduce((o, d) => {
+          o[d.category] = (o[d.category]||0) + d.amount;
+          return o;
+        }, {});
+        const top = Object.entries(all)
+          .sort((a,b)=>b[1]-a[1])
+          .slice(0,5);
+        labels = top.map(e=>e[0]);
+        vals   = top.map(e=>e[1]);
+        title  = `Top 5 (${fy})`;
+      }
+      else {
+        const byItem = f.reduce((o, d) => {
+          o[d.lineItem] = (o[d.lineItem]||0) + d.amount;
+          return o;
+        }, {});
+        labels = Object.keys(byItem);
+        vals   = Object.values(byItem);
+        title  = `Breakdown (${ct})`;
+      }
+
+      if (amountByCategoryChart) amountByCategoryChart.destroy();
+      amountByCategoryChart = new Chart(
+        document.getElementById('amountByCategoryChart'),
+        {
+          type: 'pie',
+          data: { labels, datasets: [{ data: vals, backgroundColor: labels.map((_,i)=>`hsl(${(i*360)/labels.length},70%,60%)`) }] },
+          options:{
+            responsive:true,
+            plugins:{
+              tooltip:{ enabled:true },
+              title:{ display:true, text:title },
+              legend:{ labels:{ color:'#fff' }}
+            }
+          }
+        }
+      );
+    }
+
+    function updateAreaChart() {
+      const fy = document.getElementById('fiscalYear3').value;
+      const ct = document.getElementById('category3').value;
+      let f = data;
+      if (fy) f = f.filter(d => d.fiscalYear === fy);
+      if (ct) f = f.filter(d => d.category === ct);
+
+      const yrs = [...new Set(f.map(d=>d.fiscalYear))].sort();
+      const cats = [...new Set(f.map(d=>d.category))];
+      const byYear = {};
+      f.forEach(d=>{
+        byYear[d.fiscalYear] = byYear[d.fiscalYear]||{};
+        byYear[d.fiscalYear][d.category] = (byYear[d.fiscalYear][d.category]||0) + d.amount;
+      });
+
+      const datasets = cats.map((c,i)=>({
+        label: c,
+        data: yrs.map(y=>byYear[y]?.[c]||0),
+        fill: true,
+        backgroundColor: `hsla(${(i*360)/cats.length},70%,60%,0.5)`,
+        borderColor:     `hsl(${(i*360)/cats.length},70%,50%)`
+      }));
+
+      if (areaChart) areaChart.destroy();
+      areaChart = new Chart(
+        document.getElementById('areaChart'),
+        {
+          type: 'line',
+          data: { labels: yrs, datasets },
+          options:{
+            responsive:true,
+            plugins:{ tooltip:{ enabled:true }},
+            scales:{
+              x:{ ticks:{ color:'#fff' }},
+              y:{ stacked:true, ticks:{ color:'#fff' }}
+            }
+          }
+        }
+      );
+    }
+
+    function initTabs() {
+      document.querySelectorAll('[data-tab]').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          document.querySelectorAll('[data-tab]').forEach(b=>b.classList.remove('border-b-2','border-blue-400'));
+          btn.classList.add('border-b-2','border-blue-400');
+          document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+          document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+          switch(btn.dataset.tab) {
+            case '1': updateCategoryChart();      break;
+            case '2': updateAmountByCategoryChart(); break;
+            case '3': updateAreaChart();          break;
+          }
+        });
+      });
+      document.querySelector('[data-tab="1"]').classList.add('border-b-2','border-blue-400');
+    }
+
+    
+    fetchData().then(()=>{
+      ['1','2','3'].forEach(populateSelects);
+      initTabs();
+      updateKPIs();
+      updateCategoryChart();
+      updateAmountByCategoryChart();
+      updateAreaChart();
+
+      document.getElementById('applyFilters1').addEventListener('click', updateCategoryChart);
+      document.getElementById('applyFilters2').addEventListener('click', updateAmountByCategoryChart);
+      document.getElementById('applyFilters3').addEventListener('click', updateAreaChart);
+    });
+  </script>
+  
+  <!-- Include the AI Assistant Widget -->
+  <script>
+    // Simple AI Assistant for your existing dashboard
+    class SimpleBudgetAssistant {
+      constructor() {
+        this.apiUrl = 'http://localhost:8000';
+        this.isOpen = false;
+        this.init();
+      }
+      
+      init() {
+        this.createWidget();
+        this.attachEventListeners();
+      }
+      
+      createWidget() {
+        const widget = document.createElement('div');
+        widget.id = 'budget-assistant-widget';
+        widget.innerHTML = `
+          <div style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+            <button id="assistant-toggle" style="
+              background: #2563eb; color: white; border: none; border-radius: 50px; 
+              padding: 12px 20px; cursor: pointer; display: flex; align-items: center; 
+              gap: 8px; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            ">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>Ask the Budget</span>
+            </button>
+            
+            <div id="assistant-panel" style="
+              position: absolute; bottom: 70px; right: 0; width: 400px; height: 500px;
+              background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+              display: none; flex-direction: column; overflow: hidden;
+            ">
+              <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1e293b;">Budget Assistant</h3>
+                <button id="assistant-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b;">×</button>
+              </div>
+              
+              <div id="assistant-messages" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="color: #64748b; font-size: 14px; line-height: 1.5;">
+                  <p>Welcome! I can help you find information about the Landover Hills budget.</p>
+                  <p>Try asking questions like:</p>
+                  <ul>
+                    <li>"How much is allocated to Police?"</li>
+                    <li>"What's the total budget for 2024?"</li>
+                    <li>"Show me Public Works spending"</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div style="padding: 16px 20px; border-top: 1px solid #e2e8f0; display: flex; gap: 8px;">
+                <input id="assistant-input" type="text" placeholder="Ask about the budget..." style="
+                  flex: 1; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 20px; 
+                  font-size: 14px; outline: none; color: #1e293b; background: white;
+                ">
+                <button id="assistant-send" style="
+                  background: #2563eb; color: white; border: none; border-radius: 50%; 
+                  width: 40px; height: 40px; cursor: pointer; display: flex; 
+                  align-items: center; justify-content: center;
+                ">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(widget);
+      }
+      
+      attachEventListeners() {
+        const toggle = document.getElementById('assistant-toggle');
+        const close = document.getElementById('assistant-close');
+        const input = document.getElementById('assistant-input');
+        const send = document.getElementById('assistant-send');
+        
+        toggle.addEventListener('click', () => this.toggle());
+        close.addEventListener('click', () => this.close());
+        
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') this.sendMessage();
+        });
+        
+        send.addEventListener('click', () => this.sendMessage());
+      }
+      
+      toggle() {
+        this.isOpen = !this.isOpen;
+        const panel = document.getElementById('assistant-panel');
+        panel.style.display = this.isOpen ? 'flex' : 'none';
+        if (this.isOpen) {
+          setTimeout(() => document.getElementById('assistant-input').focus(), 100);
+        }
+      }
+      
+      close() {
+        this.isOpen = false;
+        document.getElementById('assistant-panel').style.display = 'none';
+      }
+      
+      async sendMessage() {
+        const input = document.getElementById('assistant-input');
+        const message = input.value.trim();
+        if (!message) return;
+        
+        this.addMessage('user', message);
+        input.value = '';
+        
+        try {
+          const response = await fetch(`${this.apiUrl}/ask`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: message })
+          });
+          
+          const data = await response.json();
+          this.addMessage('assistant', data.answer, data);
+        } catch (error) {
+          this.addMessage('assistant', `Sorry, I encountered an error: ${error.message}`);
+        }
+      }
+      
+      addMessage(sender, content, data = null) {
+        const messagesContainer = document.getElementById('assistant-messages');
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.style.cssText = `
+          display: flex; flex-direction: column; gap: 8px;
+          align-items: ${sender === 'user' ? 'flex-end' : 'flex-start'};
+        `;
+        
+        const bubble = document.createElement('div');
+        bubble.style.cssText = `
+          max-width: 80%; padding: 12px 16px; border-radius: 18px; 
+          font-size: 14px; line-height: 1.4;
+          background: ${sender === 'user' ? '#2563eb' : '#f1f5f9'};
+          color: ${sender === 'user' ? 'white' : '#1e293b'};
+        `;
+        bubble.textContent = content;
+        messageDiv.appendChild(bubble);
+        
+        if (data && data.evidence && data.evidence.length > 0) {
+          const evidenceDiv = document.createElement('div');
+          evidenceDiv.style.cssText = `
+            margin-top: 8px; padding: 12px; background: #f8fafc; 
+            border-radius: 8px; border-left: 3px solid #2563eb;
+          `;
+          
+          let evidenceHTML = '<h4 style="margin: 0 0 8px 0; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Sources</h4>';
+          data.evidence.slice(0, 3).forEach((item, index) => {
+            evidenceHTML += `
+              <div style="font-size: 12px; color: #64748b; margin: 4px 0; padding: 4px 0; border-bottom: 1px solid #e2e8f0;">
+                [${index + 1}] ${item.department} - FY${item.fiscal_year} - $${item.amount ? item.amount.toLocaleString() : '0'}
+              </div>
+            `;
+          });
+          
+          evidenceDiv.innerHTML = evidenceHTML;
+          messageDiv.appendChild(evidenceDiv);
+        }
+        
+        if (data && data.total) {
+          const totalDiv = document.createElement('div');
+          totalDiv.style.cssText = `
+            background: #dcfce7; color: #166534; padding: 8px 12px; 
+            border-radius: 6px; font-weight: 600; margin: 8px 0;
+          `;
+          totalDiv.textContent = `Total: $${data.total ? data.total.toLocaleString() : '0'}`;
+          messageDiv.appendChild(totalDiv);
+        }
+        
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+    }
+    
+    // Initialize the assistant when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      new SimpleBudgetAssistant();
+    });
+  </script>
+</body>
+</html>
+

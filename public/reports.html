@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Municipal Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .nav a {
+            padding: 10px 20px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .nav a:hover {
+            background: #1d4ed8;
+        }
+        
+        .nav a.active {
+            background: #1e293b;
+        }
+        
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .report-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .report-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+        }
+        
+        .report-date {
+            font-size: 0.9em;
+            color: #64748b;
+        }
+        
+        .report-description {
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+        
+        .report-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+        
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        
+        .highlight {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .highlight p {
+            margin: 0;
+            color: #92400e;
+        }
+        
+        .validation-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        .validation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .validation-item:last-child {
+            border-bottom: none;
+        }
+        
+        .severity-high {
+            color: #dc2626;
+        }
+        
+        .severity-medium {
+            color: #d97706;
+        }
+        
+        .severity-low {
+            color: #059669;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 Financial Reports</h1>
+            <p>Comprehensive financial documents and validation findings</p>
+            
+            <div class="nav">
+                <a href="index.html">Home</a>
+                <a href="budget.html">Budget Overview</a>
+                <a href="departments.html">Departments</a>
+                <a href="reports.html" class="active">Reports</a>
+                <a href="about.html">About</a>
+            </div>
+        </div>
+        
+        <div class="highlight">
+            <p><strong>📊 Report Analysis:</strong> Ask the assistant to analyze any report! Try "What are the key findings in the audit report?" or "Show me validation issues from this year." The assistant can extract insights from complex financial documents.</p>
+        </div>
+        
+        <!-- Fiscal Year Selection -->
+        <div class="chart-container">
+            <h3>Select Fiscal Year</h3>
+            <select id="fiscalYearSelect" onchange="loadReportData()">
+                <option value="2024">FY2024</option>
+                <option value="2025" selected>FY2025</option>
+                <option value="2026">FY2026</option>
+            </select>
+        </div>
+        
+        <div class="reports-grid" id="reportsGrid">
+            <div class="report-card">
+                <div class="report-header">
+                    <h3 class="report-title">📋 FY2024 Budget Ordinance</h3>
+                    <span class="report-date">March 2024</span>
+                </div>
+                <p class="report-description">Complete budget ordinance with department allocations, line items, and financial projections for fiscal year 2024.</p>
+                <div class="report-actions">
+                    <button class="btn btn-primary">View PDF</button>
+                    <button class="btn btn-secondary">Download</button>
+                </div>
+            </div>
+            
+            <div class="report-card">
+                <div class="report-header">
+                    <h3 class="report-title">🔍 Annual Audit Report</h3>
+                    <span class="report-date">December 2023</span>
+                </div>
+                <p class="report-description">Independent audit findings, financial statements, and compliance review for the previous fiscal year.</p>
+                <div class="report-actions">
+                    <button class="btn btn-primary">View PDF</button>
+                    <button class="btn btn-secondary">Download</button>
+                </div>
+            </div>
+            
+            <div class="report-card">
+                <div class="report-header">
+                    <h3 class="report-title">📊 Quarterly Financial Report</h3>
+                    <span class="report-date">Q3 2024</span>
+                </div>
+                <p class="report-description">Third quarter financial performance, spending analysis, and budget variance report.</p>
+                <div class="report-actions">
+                    <button class="btn btn-primary">View PDF</button>
+                    <button class="btn btn-secondary">Download</button>
+                </div>
+            </div>
+            
+            <div class="report-card">
+                <div class="report-header">
+                    <h3 class="report-title">🏗️ Capital Projects Report</h3>
+                    <span class="report-date">October 2024</span>
+                </div>
+                <p class="report-description">Status update on major capital projects, infrastructure investments, and construction progress.</p>
+                <div class="report-actions">
+                    <button class="btn btn-primary">View PDF</button>
+                    <button class="btn btn-secondary">Download</button>
+                </div>
+            </div>
+            
+            <div class="report-card">
+                <div class="report-header">
+                    <h3 class="report-title">📝 Budget Amendment</h3>
+                    <span class="report-date">August 2024</span>
+                </div>
+                <p class="report-description">Mid-year budget adjustments, reallocations, and emergency funding authorizations.</p>
+                <div class="report-actions">
+                    <button class="btn btn-primary">View PDF</button>
+                    <button class="btn btn-secondary">Download</button>
+                </div>
+            </div>
+            
+            <div class="report-card">
+                <div class="report-header">
+                    <h3 class="report-title">📋 Meeting Minutes</h3>
+                    <span class="report-date">November 2024</span>
+                </div>
+                <p class="report-description">City council meeting minutes with budget discussions, approvals, and public comments.</p>
+                <div class="report-actions">
+                    <button class="btn btn-primary">View PDF</button>
+                    <button class="btn btn-secondary">Download</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="validation-section">
+            <h3>🔍 Data Validation Findings</h3>
+            <p>Automated validation results to ensure budget data accuracy and transparency.</p>
+            
+            <div class="validation-item">
+                <div>
+                    <strong>Totals Mismatch</strong>
+                    <br>
+                    <small>Line items don't match reported totals in FY2024 Budget Ordinance</small>
+                </div>
+                <span class="severity-medium">Medium</span>
+            </div>
+            
+            <div class="validation-item">
+                <div>
+                    <strong>Year-over-Year Change</strong>
+                    <br>
+                    <small>Public Works budget increased 18% from FY2023 to FY2024</small>
+                </div>
+                <span class="severity-high">High</span>
+            </div>
+            
+            <div class="validation-item">
+                <div>
+                    <strong>Missing Department</strong>
+                    <br>
+                    <small>3 budget facts missing department assignment</small>
+                </div>
+                <span class="severity-low">Low</span>
+            </div>
+            
+            <div class="validation-item">
+                <div>
+                    <strong>Duplicate Line Items</strong>
+                    <br>
+                    <small>Equipment purchases appear twice in Police department</small>
+                </div>
+                <span class="severity-low">Low</span>
+            </div>
+        </div>
+        
+        <div class="highlight" style="margin-top: 30px;">
+            <p><strong>🤖 AI-Powered Analysis:</strong> The assistant can analyze any of these reports! Ask "What are the main issues in the validation findings?" or "Summarize the key points from the audit report."</p>
+        </div>
+    </div>
+    
+    <!-- Include the persistent assistant widget -->
+    <script src="assistant.js"></script>
+    
+    <script>
+        // Load report data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReportData();
+        });
+        
+        async function loadReportData() {
+            const fiscalYear = document.getElementById('fiscalYearSelect').value;
+            
+            try {
+                // Get budget summary for the selected year
+                const response = await fetch(`/ask`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        question: `What is the total budget for FY${fiscalYear}?`
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Update report cards with dynamic data
+                updateReportCards(fiscalYear, data.total);
+                
+            } catch (error) {
+                console.error('Error loading report data:', error);
+            }
+        }
+        
+        function updateReportCards(fiscalYear, totalBudget) {
+            const reportsGrid = document.getElementById('reportsGrid');
+            
+            // Clear existing reports
+            reportsGrid.innerHTML = '';
+            
+            // Create budget ordinance report
+            const budgetReport = createReportCard(
+                `📋 FY${fiscalYear} Budget Ordinance`,
+                `Complete budget ordinance with department allocations, line items, and financial projections for fiscal year ${fiscalYear}.`,
+                `March ${fiscalYear}`,
+                `$${(totalBudget / 1000000).toFixed(1)}M Total Budget`
+            );
+            reportsGrid.appendChild(budgetReport);
+            
+            // Create financial summary report
+            const summaryReport = createReportCard(
+                `📊 FY${fiscalYear} Financial Summary`,
+                `Comprehensive financial summary including revenue sources, expenditure breakdown, and year-over-year comparisons.`,
+                `April ${fiscalYear}`,
+                'Updated'
+            );
+            reportsGrid.appendChild(summaryReport);
+            
+            // Create department breakdown report
+            const deptReport = createReportCard(
+                `🏢 FY${fiscalYear} Department Analysis`,
+                `Detailed analysis of spending by department, including line item breakdowns and budget utilization.`,
+                `May ${fiscalYear}`,
+                'Available'
+            );
+            reportsGrid.appendChild(deptReport);
+            
+            // Create validation report
+            const validationReport = createReportCard(
+                `✅ FY${fiscalYear} Validation Report`,
+                `Data quality validation findings, including inconsistencies, missing data, and compliance issues.`,
+                `June ${fiscalYear}`,
+                'Pending'
+            );
+            reportsGrid.appendChild(validationReport);
+        }
+        
+        function createReportCard(title, description, date, status) {
+            const card = document.createElement('div');
+            card.className = 'report-card';
+            
+            card.innerHTML = `
+                <div class="report-header">
+                    <h3 class="report-title">${title}</h3>
+                    <span class="report-date">${date}</span>
+                </div>
+                <p class="report-description">${description}</p>
+                <div class="report-actions">
+                    <button class="btn btn-primary" onclick="askAboutReport('${title}', '${description}')">Ask Assistant</button>
+                    <button class="btn btn-secondary">Download</button>
+                </div>
+                <div class="report-status">
+                    <span class="status-badge">${status}</span>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function askAboutReport(title, description) {
+            // This would open the assistant with a pre-filled question
+            const question = `Tell me about ${title}`;
+            if (window.BudgetAssistant) {
+                window.BudgetAssistant.open();
+                // You could add a method to pre-fill the input
+                setTimeout(() => {
+                    const input = document.querySelector('#budgetAssistant input[type="text"]');
+                    if (input) {
+                        input.value = question;
+                    }
+                }, 100);
+            }
+        }
+    </script>
+</body>
+</html>
+
+

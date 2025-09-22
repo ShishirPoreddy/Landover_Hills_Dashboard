@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Budget Assistant Frontend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 3px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Budget Assistant Frontend Test</h1>
+    
+    <div class="test-section">
+        <h3>Test Questions</h3>
+        <button class="test-button" onclick="testQuestion('what is the budget difference between FY24 and FY25?')">
+            Test Budget Difference
+        </button>
+        <button class="test-button" onclick="testQuestion('Show me Public Works spending')">
+            Test Public Works
+        </button>
+        <button class="test-button" onclick="testQuestion('What is the total budget for FY24?')">
+            Test Total Budget
+        </button>
+        <button class="test-button" onclick="testQuestion('Which category received the most funding in FY25?')">
+            Test Category Ranking
+        </button>
+        <div id="test-result" class="result"></div>
+    </div>
+
+    <script>
+        async function testQuestion(question) {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch('http://127.0.0.1:8000/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: question })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                resultDiv.textContent = `Question: ${question}\n\nResponse:\n${JSON.stringify(data, null, 2)}`;
+                
+            } catch (error) {
+                resultDiv.textContent = `Error testing question "${question}": ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv
+requests
+
+# PDFs & parsing
+pdfplumber
+pytesseract
+Pillow
+camelot-py
+tabula-py
+pandas
+numpy
+pypdf
+pdfminer.six
+
+# Database & vector search
+SQLAlchemy
+psycopg2-binary
+pgvector
+
+# Embeddings / LLM
+openai>=1.40.0
+
+# Additional utilities
+click

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Municipal Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .nav a {
+            padding: 10px 20px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .nav a:hover {
+            background: #1d4ed8;
+        }
+        
+        .nav a.active {
+            background: #1e293b;
+        }
+        
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .feature-card h3 {
+            margin: 0 0 10px 0;
+            color: #1e293b;
+        }
+        
+        .feature-card p {
+            margin: 0;
+            color: #64748b;
+        }
+        
+        .highlight {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .highlight p {
+            margin: 0;
+            color: #92400e;
+        }
+        
+        .tech-stack {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .tech-stack h3 {
+            margin: 0 0 15px 0;
+            color: #1e293b;
+        }
+        
+        .tech-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .tech-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ℹ️ About This Dashboard</h1>
+            <p>Transparent municipal budget information powered by AI</p>
+            
+            <div class="nav">
+                <a href="index.html">Home</a>
+                <a href="budget.html">Budget Overview</a>
+                <a href="departments.html">Departments</a>
+                <a href="reports.html">Reports</a>
+                <a href="about.html" class="active">About</a>
+            </div>
+        </div>
+        
+        <div class="content">
+            <h2>🤖 AI-Powered Budget Transparency</h2>
+            <p>This municipal budget dashboard uses advanced AI technology to make complex financial data accessible and understandable for residents. The system automatically processes budget documents, extracts key information, and provides natural language answers to your questions.</p>
+            
+            <div class="highlight">
+                <p><strong>💬 Try the Assistant:</strong> The AI assistant follows you across all pages and remembers your conversation. Ask any budget question and get direct answers with supporting evidence!</p>
+            </div>
+            
+            <h3>Key Features</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📄 Document Processing</h3>
+                    <p>Automatically ingests PDFs and CSVs, extracts text, and structures budget data for analysis.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🏷️ Smart Metadata</h3>
+                    <p>Identifies fiscal years, departments, and document types using advanced pattern recognition.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>✅ Data Validation</h3>
+                    <p>Continuously monitors data quality, finds inconsistencies, and flags potential issues.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>📊 Natural Summaries</h3>
+                    <p>Generates easy-to-understand budget summaries for each department and fiscal year.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>💬 Direct Q&A</h3>
+                    <p>Answers budget questions with exact dollar amounts, evidence, and supporting documents.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🔍 Vector Search</h3>
+                    <p>Uses semantic search to find relevant information even with complex or vague questions.</p>
+                </div>
+            </div>
+            
+            <h3>How It Works</h3>
+            <ol>
+                <li><strong>Ingestion:</strong> Budget documents are automatically processed and stored in a structured database</li>
+                <li><strong>Extraction:</strong> AI agents extract fiscal years, departments, line items, and amounts</li>
+                <li><strong>Validation:</strong> Automated checks ensure data accuracy and flag anomalies</li>
+                <li><strong>Summarization:</strong> Natural language summaries are generated for each department/year</li>
+                <li><strong>Q&A:</strong> Residents can ask questions and get direct answers with evidence</li>
+            </ol>
+            
+            <div class="tech-stack">
+                <h3>Technology Stack</h3>
+                <div class="tech-list">
+                    <div class="tech-item">Python 3.11</div>
+                    <div class="tech-item">FastAPI</div>
+                    <div class="tech-item">PostgreSQL + pgvector</div>
+                    <div class="tech-item">OpenAI GPT-4</div>
+                    <div class="tech-item">SQLAlchemy</div>
+                    <div class="tech-item">JavaScript</div>
+                    <div class="tech-item">HTML/CSS</div>
+                    <div class="tech-item">PDF Processing</div>
+                </div>
+            </div>
+            
+            <h3>Data Sources</h3>
+            <p>The system processes various types of municipal financial documents:</p>
+            <ul>
+                <li>Budget ordinances and amendments</li>
+                <li>Annual audit reports</li>
+                <li>Quarterly financial statements</li>
+                <li>Department budget requests</li>
+                <li>Capital project proposals</li>
+                <li>Meeting minutes and resolutions</li>
+            </ul>
+            
+            <h3>Privacy & Security</h3>
+            <p>All budget data is public information. The system processes only publicly available municipal documents and does not collect or store personal information. All data processing is performed securely and in compliance with public records laws.</p>
+            
+            <h3>Contact</h3>
+            <p>For questions about this dashboard or to suggest improvements, please contact the municipal IT department or use the feedback form on the main page.</p>
+            
+            <div class="highlight">
+                <p><strong>🎯 Pro Tip:</strong> The assistant can explain any part of this system! Ask "How does the validation work?" or "What data sources are used?" to learn more about the technology behind this dashboard.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Include the persistent assistant widget -->
+    <script src="assistant.js"></script>
+</body>
+</html>
+
+
+

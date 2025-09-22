@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Municipal Budget Assistant - Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+        
+        .section {
+            margin-bottom: 32px;
+        }
+        
+        .section h2 {
+            color: #374151;
+            margin-bottom: 16px;
+        }
+        
+        .example-questions {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .example-questions ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .example-questions li {
+            margin: 8px 0;
+            color: #475569;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .feature h3 {
+            margin: 0 0 8px 0;
+            color: #1e293b;
+            font-size: 16px;
+        }
+        
+        .feature p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+        
+        .note {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+        
+        .note strong {
+            color: #78350f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Municipal Budget Assistant</h1>
+        <p class="subtitle">Ask questions about municipal budgets and get direct answers with evidence</p>
+        
+        <div class="section">
+            <h2>About</h2>
+            <p>This is a demo of the Municipal Budget Assistant widget. The widget allows residents to ask questions about municipal budgets and receive direct answers with supporting evidence and citations.</p>
+            
+            <div class="note">
+                <strong>Note:</strong> This demo requires the backend API to be running on <code>http://localhost:8000</code>. 
+                Make sure to start the FastAPI server before testing the widget.
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Features</h2>
+            <div class="features">
+                <div class="feature">
+                    <h3>Direct Answers</h3>
+                    <p>Get exact dollar amounts and totals for budget questions</p>
+                </div>
+                <div class="feature">
+                    <h3>Evidence & Citations</h3>
+                    <p>See supporting documents and line items for every answer</p>
+                </div>
+                <div class="feature">
+                    <h3>Smart Filtering</h3>
+                    <p>Automatically filters by department, year, and line item</p>
+                </div>
+                <div class="feature">
+                    <h3>Year-over-Year</h3>
+                    <p>Compare budget changes between fiscal years</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Try These Questions</h2>
+            <div class="example-questions">
+                <ul>
+                    <li>"How much is allocated to road repairs?"</li>
+                    <li>"What's the Police budget for 2024?"</li>
+                    <li>"Show me Public Works spending"</li>
+                    <li>"Total budget for Administration"</li>
+                    <li>"How much did we spend on equipment?"</li>
+                    <li>"What changed in Police between FY2024 and FY2025?"</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>How to Use</h2>
+            <p>Click the "Ask the Budget" button in the bottom-right corner to open the chat widget. Type your question and press Enter or click the send button.</p>
+            
+            <p>The assistant will:</p>
+            <ul>
+                <li>Parse your question to understand what you're looking for</li>
+                <li>Query the budget database for relevant information</li>
+                <li>Return a direct answer with supporting evidence</li>
+                <li>Show you exactly which documents and line items support the answer</li>
+                <li><strong>Follow you across pages</strong> - the conversation persists as you navigate!</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>🌐 Multi-Page Demo:</strong> <a href="index.html" style="color: #2563eb; text-decoration: none; font-weight: 600;">Try the full multi-page demo</a> to see how the assistant travels with you across different sections of the municipal dashboard!</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Integration</h2>
+            <p>To add this widget to your own website, include the following script:</p>
+            
+            <div class="code-block">
+&lt;script src="http://localhost:8000/public/assistant.js"&gt;&lt;/script&gt;
+            </div>
+            
+            <p>The widget will automatically initialize when the page loads. You can also customize it:</p>
+            
+            <div class="code-block">
+&lt;script&gt;
+// Custom initialization
+const assistant = new BudgetAssistant({
+    apiUrl: 'http://your-api-url.com'
+});
+&lt;/script&gt;
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>API Endpoints</h2>
+            <p>The assistant uses several API endpoints:</p>
+            <ul>
+                <li><code>POST /ask</code> - Ask questions and get answers</li>
+                <li><code>GET /summaries</code> - Get budget summaries by department/year</li>
+                <li><code>GET /findings</code> - Get validation findings and anomalies</li>
+                <li><code>GET /departments</code> - List all departments</li>
+                <li><code>GET /years</code> - List all fiscal years</li>
+                <li><code>GET /stats</code> - Get basic statistics</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Include the assistant widget -->
+    <script src="assistant.js"></script>
+</body>
+</html>
