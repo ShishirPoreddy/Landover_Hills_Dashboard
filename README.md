@@ -39,8 +39,8 @@ A sophisticated municipal budget analysis chatbot that provides real-time financ
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/landover-budget-assistant.git
-   cd landover-budget-assistant
+   git clone https://github.com/ShishirPoreddy/Landover_Hills_Dashboard.git
+   cd Landover_Hills_Dashboard
    ```
 
 2. **Set up Python environment**
