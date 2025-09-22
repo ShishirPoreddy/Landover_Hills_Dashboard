@@ -1,6 +1,8 @@
 # Landover Hills Budget Assistant
 
-A sophisticated municipal budget analysis chatbot that provides real-time financial insights through natural language queries. Built with FastAPI, Supabase, and advanced LLM integration.
+This project is a data transparency and analytics initiative for the Town of Landover Hills, Maryland. It improves fiscal transparency by converting raw municipal records into machine-readable formats, establishing metadata standards, and building interactive dashboards that make complex budget data accessible to residents.
+
+The platform is built with FastAPI, Supabase, and modern visualization tools, and features a budget analysis chatbot powered by large-language-model integration. Residents can ask natural-language questions and receive real-time financial insights, creating a sustainable framework for open data and strengthening community trust in local governance.
 
 ## Features
 
