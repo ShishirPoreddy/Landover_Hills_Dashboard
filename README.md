@@ -1,33 +1,33 @@
-# 🏛️ Landover Hills Budget Assistant
+# Landover Hills Budget Assistant
 
 A sophisticated municipal budget analysis chatbot that provides real-time financial insights through natural language queries. Built with FastAPI, Supabase, and advanced LLM integration.
 
-## ✨ Features
+## Features
 
-### 📊 **Comprehensive Budget Analysis**
+### **Comprehensive Budget Analysis**
 - **Year-over-year comparisons** - Track budget changes across fiscal years
 - **Category rankings** - Identify top-funded departments and programs
 - **Percentage breakdowns** - Understand budget distribution and shares
 - **Line-item details** - Drill down into specific budget allocations
 
-### 🤖 **Advanced Natural Language Processing**
+### **Advanced Natural Language Processing**
 - **Intent recognition** - Converts natural language to structured queries
 - **Mathematical accuracy** - All calculations based on database views, not LLM hallucinations
 - **Context-aware responses** - Understands fiscal years, departments, and budget terminology
 - **Error handling** - Graceful fallbacks for unclear or complex queries
 
-### 🔮 **Scenario Planning & Forecasting**
+### **Scenario Planning & Forecasting**
 - **What-if analysis** - Model budget changes and their impacts
 - **Percentage-based scenarios** - "If police funding increases by 10%..."
 - **Across-the-board cuts** - Analyze department-wide budget reductions
 - **Impact calculations** - Precise dollar amounts and percentage changes
 
-### 📈 **Real-time Data Integration**
+### **Real-time Data Integration**
 - **Supabase integration** - Live connection to municipal budget database
 - **PostgreSQL views** - Optimized queries for fast responses
 - **FY26 partial data handling** - Transparent reporting of incomplete data
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.11+
@@ -73,7 +73,7 @@ A sophisticated municipal budget analysis chatbot that provides real-time financ
    ```
 
 7. **Access the application**
-   - Dashboard: http://127.0.0.1:8000/
+   - Dashboard: http://127.0.0.1:8000/index.html
    - API Docs: http://127.0.0.1:8000/docs
 
 ## 💬 Example Queries
@@ -97,7 +97,7 @@ A sophisticated municipal budget analysis chatbot that provides real-time financ
 - "How much did Administration spend on Payroll Taxes in FY24?"
 - "Show me all line items for Police Department in FY25"
 
-## 🏗️ Architecture
+## Architecture
 
 ### Backend (FastAPI)
 - **Intent Recognition** - LLM-based natural language understanding
@@ -115,7 +115,7 @@ A sophisticated municipal budget analysis chatbot that provides real-time financ
 - **Interactive charts** - Visual budget representations
 - **Real-time chat** - Seamless conversation interface
 
-## 📊 Database Schema
+## Database Schema
 
 The application uses PostgreSQL views for optimal performance:
 
@@ -125,7 +125,7 @@ The application uses PostgreSQL views for optimal performance:
 - `v_category_shares` - Percentage breakdowns
 - `v_line_items` - Detailed line-item data
 
-## 🔧 API Endpoints
+## API Endpoints
 
 ### Core Endpoints
 - `POST /ask` - Main chat interface
@@ -139,7 +139,7 @@ The application uses PostgreSQL views for optimal performance:
 - `GET /api/budget/shares` - Percentage breakdowns
 - `GET /api/budget/line-item` - Specific line items
 
-## 🧪 Testing
+## Testing
 
 ### Unit Tests
 ```bash
@@ -157,7 +157,7 @@ curl -X POST "http://127.0.0.1:8000/ask" \
 ### Interactive Testing
 Visit http://127.0.0.1:8000/docs for the interactive API documentation.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 landover-budget-assistant/
@@ -179,7 +179,7 @@ landover-budget-assistant/
 └── requirements.txt       # Python dependencies
 ```
 
-## 🔒 Environment Variables
+## Environment Variables
 
 Create a `.env` file with the following variables:
 
@@ -190,7 +190,7 @@ SUPABASE_DATABASE_URL=your_database_url
 OPENAI_API_KEY=your_openai_key
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -202,17 +202,11 @@ OPENAI_API_KEY=your_openai_key
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Town of Landover Hills** - For providing the budget data
 - **Supabase** - For the database infrastructure
 - **OpenAI** - For the language model capabilities
 - **FastAPI** - For the robust web framework
 
-## 📞 Support
 
-For questions or support, please open an issue on GitHub or contact the development team.
-
----
-
-**Built with ❤️ for transparent municipal budgeting**
